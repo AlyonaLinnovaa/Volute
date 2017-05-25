@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Конвертер валют</title>
+
+	<style>
+		table {
+			border: 1px solid;
+			width: 650px;
+		}
+
+		td {
+			padding: 15px;
+		}
+
+		input, select {
+			height: 50px;
+			font-size: 13px;
+		} 
+	</style>
+</head>
+<body>
+
+<h1>Конвертер валют</h1>
+<p>Расчитывается автоматически при изменении полей.</p>
+<br>
+<table>
+	<tr>
+		<td width="45%">
+			<input id="input-from" type="text" value="1">
+			<select id="select-from" name="from" onchange="convert()">
+				<option value="RUB" selected>₽</option>
+				<option value="EUR">€</option>
+				<option value="USD">$</option>
+			</select>
+		</td>
+		<td align="center" width="10%">&gt;</td>
+		<td width="45%">
+			<input id="input-to" type="text" disabled>
+			<select id="select-to" name="to" onchange="convert()">
+				<option value="RUB" selected>₽</option>
+				<option value="EUR">€</option>
+				<option value="USD">$</option>
+			</select>
+		</td>
+	</tr>
+</table>
+
+
+<script>
+	// Котировки
+	var currencies = {
+		RUB: 1,
+		EUR: 63.8,
+		USD: 56.8
+	};
+
+	// Функция конвертации валюты
+	// вызывается при изменении селектов валюты, и вводе числа
+	var convert = function() {
+		var currentFrom = document.getElementById("select-from").value, // валюта из
+			currentTo = document.getElementById("select-to").value, // валюта в
+			num = document.getElementById("input-from").value; // число
+
+		num = num.replace(/\s+/g, '');
+
+		// Расчет
+		var rate = currencies[currentFrom] * (1 / currencies[currentTo]);
+		rate *= num;
+
+		// Вывод отформатированного числа 
+		document.getElementById("input-to").value = formatNumber(rate);
+	}
+
+	// Разделение разрядов числа пробелами
+	var formatNumber = function(n) {
+		return n.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
+	}
+
+	// Смотрим изменения в поле ввода
+	// форматируем число и конвертируем валюту
+	var input = document.getElementById("input-from");
+	input.addEventListener("keyup", function(evt) {
+		input.value = formatNumber(this.value.replace(/\s+/g, ''));
+		convert();
+	}, false);
+</script>
+
+</body>
+</html>
